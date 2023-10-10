@@ -12,7 +12,7 @@ class view(tk.Tk):
     MAX_BUTTONS_PER_ROW = 4
     
     #* creation d'une variable de classe, contenant les boutons du calculatrice
-    #! En parcourant la liste, nous creons dynamiquement nos bouttons
+    #! En parcourant la liste, nous creons dynamiquemlbl nos bouttons
     button_caption = [
         'C', '+/-', '%', '/',
         7, 8, 9, '*',
@@ -29,37 +29,64 @@ class view(tk.Tk):
         
         self.title('PyCalc1.0')
         
+        #! config() = methode pour la mise en forme de la fenetre (represente par self ) 
+        # changer la couleur du backgroud de la fenetre principale.
+        self.config(bg="black")
+        
+        #! Pour configurer ntre objet de style (dans la methode _configure_button_style()), nous allons creer ce attribut...
+        self._configure_button_style()
+        
         self.controler = controler
         
         self.value_var = tk.StringVar()
         
         self._make_main_frame()
-        self._make_entry()
+        
+        # ! changer la methode _make_entry() (pour ttk) en _make_label (pour tk), car plus facile a formater (en tk)
+        self._make_label()
         self._make_buttons()
-        self.center_windows()
+        self.clbler_windows()
+    
+    #! Pour configurer les boutons, ns creons un objet de style (ie: usons ttq) car il y a plusieurs boutons.
+    def _configure_button_style(self):
+        style = ttk.Style()
+        # Pour utiliser un theme pour my appli
+        style.theme_use('alt')
+        
+        #! Pour afficher la liste des themes dispos dans mon 6stem 
+        # print(style.theme_names())
+        # ! Pour voir le theme use par my os
+        # print(style.theme_use())
+        
+        # ! NB: STYLE vs THEME
+        # THEME: change le style de all widgets (ie: un champ qui change toute la fenetre/appli)
+        # STYLE: change le style individuellemet ( des boutons)
     
     def mainView(self):
         self.mainloop()
     
     #* le underscore du debut indique la methode n'est utilisable que dans la classe view.
     def _make_main_frame(self):
-        #* le self. ici rend main_frm un attribut de la classe view (pour etre accessible dans _make_entry())
+        #* le self. ici rend main_frm un attribut de la classe view (pour etre accessible dans _make_label())
         self.main_frm = ttk.Frame(self)
         #* pack() defini un cadre avec un padding et x et y
         self.main_frm.pack(padx=self.PAD, pady=self.PAD)
     
-    def _make_entry(self):
-        #* pour ent, pas besoin de le rendre un attribut de la classe view (par ce que pas besoin de l'utiliser ailleurs)
-        ent = ttk.Entry(self.main_frm, justify='right', textvariable=self.value_var, state='disabled')
-        ent.pack(fill='x')
+    def _make_label(self):
+        # ! changer la variable enty en lbl
+        #* pour lbl, pas besoin de le rendre en attribut dans la classe view (par ce que pas besoin de l'utiliser ailleurs). A la place, nous utilisons " textvariable ", pour garder une trace de la valeur ( de lbl)
+        # * AUSSI: nous n'avons pas besoin d'utiliser l'objet label lui-meme, il sera quand meme cree et emballe dans la fenetre, mais nous n'avons pas besoin qu'il soit un attribut (= donnee utilisable partout: this.lbl) de la class
+        # ! nous usons l'ancienne etiquette (tk), a la place de la nouvelle (ttk), car dans ce cas (only), nous formatons only cette seule etiquette (ie: pas risq de repetition d'options)
+        lbl = tk.Label(self.main_frm, anchor='e', textvariable=self.value_var, bg='black', fg='white', font=('Arial', 30))
+        lbl.pack(fill='x')
     
     def _make_buttons(self):
-        #* ce cadre emballe nos boutons extérieurement
+        #* ce cadre emballe nos boutons extérieuremlbl
         outer_frm = ttk.Frame(self.main_frm)
         outer_frm.pack()
         
         #* ce frm n'a pas besoin d'etre un attribue de classe, car les autres methodes n'ont pas besoin de lui. 
-        #! Or lui a besoin de self.main_frm (son conteneur parent)
+        #! Or lui a besoin de self.main_frm (son conteneur parlbl)
         frm = ttk.Frame(outer_frm)
         #* ce cadre emballe nos boutons
         frm.pack()
@@ -90,7 +117,7 @@ class view(tk.Tk):
 
             buttons_in_row += 1
     
-    def center_windows(self):
+    def clbler_windows(self):
         self.update()
         width = self.winfo_width()
         height = self.winfo_height()
@@ -100,5 +127,5 @@ class view(tk.Tk):
             f'{width}x{height}+{x_offset}+{y_offset}'
         )
     
-    #! suite à partir de la vidéo 10 à 0:00
+    #! suite à partir de la vidéo 13 à 0:00
         
