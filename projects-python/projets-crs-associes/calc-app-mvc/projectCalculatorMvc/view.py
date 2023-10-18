@@ -61,6 +61,21 @@ class view(tk.Tk):
         # ! NB: STYLE vs THEME
         # THEME: change le style de all widgets (ie: un champ qui change toute la fenetre/appli)
         # STYLE: change le style individuellemet ( des boutons)
+        
+        # Style for operator buttons
+        style.configure(
+            'N.TButton', foreground='white', background='gray'
+        )
+        
+        # Style for numbers buttons
+        style.configure(
+            'O.TButton', foreground='white', background='orange'
+        )
+        
+        # stle for auther buttons 
+        style.configure(
+            'A.TButton', background='white'
+        )
     
     def mainView(self):
         self.mainloop()
@@ -85,6 +100,7 @@ class view(tk.Tk):
         outer_frm = ttk.Frame(self.main_frm)
         outer_frm.pack()
         
+        
         #* ce frm n'a pas besoin d'etre un attribue de classe, car les autres methodes n'ont pas besoin de lui. 
         #! Or lui a besoin de self.main_frm (son conteneur parlbl)
         frm = ttk.Frame(outer_frm)
@@ -94,15 +110,27 @@ class view(tk.Tk):
         #* pour avoir 4 boutton sur  la rangée
         buttons_in_row = 0
         
+        
+        
+        
         for caption in self.button_caption:
         #* avant de créer le boutton et le cadre, verifier si la rangée a 4 bouttons
             if buttons_in_row == self.MAX_BUTTONS_PER_ROW:
                 #* si oui, créer d'abord un nouveau cadre dans le cadre outer_frm
                 frm = ttk.Frame(outer_frm)
-                frm.pack()
+                frm.pack(fill='x')
                 
                 #* à chaque création d'un nouveau cadre, il faut...
                 buttons_in_row = 0
+                
+            if isinstance(caption, int):
+                style_prefix = 'N'
+            elif self._is_operator(caption):
+                style_prefix = 'O'
+            else:
+                style_prefix = 'A'
+            
+            style_name = f'{style_prefix}.TButton'
                 
             #* si non créer le boutton et son cadre
             btn = ttk.Button(
@@ -110,12 +138,25 @@ class view(tk.Tk):
                 #* ici on recupère le button créé, et on trasmet le button à on_button_click;
                 #* ici caption, est un paramètre de la fonction on_button_click;
                 
-                frm, text=caption, command= 
+                frm, text=caption, command=( 
                 lambda button=caption: self.controler.on_button_click(button)
+                ),
+                style=style_name
                 )
-            btn.pack(side='left')
+            
+            if caption == 0:
+                fill = 'x'
+                expand = 1
+            else:
+                fill = 'none'
+                expand = 0
+            
+            btn.pack(fill=fill, expand=expand, side='left')
 
             buttons_in_row += 1
+            
+    def _is_operator(self, button_caption):
+        return button_caption in ['/', '*', '+', '-', '=']
     
     def clbler_windows(self):
         self.update()
